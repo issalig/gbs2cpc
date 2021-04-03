@@ -39,7 +39,10 @@ Leave P5.VCC unconnected.
 How to build
 ------------
 
+You will need to install Arduino IDE and the repository for ESP8266.
+Then, select your board (Wemos D1 Mini or whatever)
 
+For a detailed guide you can check https://randomnerdtutorials.com/how-to-install-esp8266-board-arduino-ide/
 
 How to use it
 -------------
