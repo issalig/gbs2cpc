@@ -35,6 +35,8 @@ Wemos > GBS8200
 * D2 > P5.SDA
 
 Leave P5.VCC unconnected. 
+You can connect P9.+ to Wemos 5V ONLY if you are powering GBS with 5V. In other case just connect Wemos to a USB charger.
+
 
 How to build
 ------------
@@ -43,6 +45,8 @@ You will need to install Arduino IDE and the repository for ESP8266.
 Then, select your board (Wemos D1 Mini or whatever)
 
 For a detailed guide you can check https://randomnerdtutorials.com/how-to-install-esp8266-board-arduino-ide/
+
+Once installed, just compile and flash it.
 
 How to use it
 -------------
