@@ -34,8 +34,9 @@ Wemos > GBS8200
 * GND > P5.GND
 * D2 > P5.SDA
 
-Leave P5.VCC unconnected. 
 You can connect P9.+ to Wemos 5V ONLY if you are powering GBS with 5V. In other case just connect Wemos to a USB charger.
+
+3.3V > P5.VCC is not recommended.
 
 
 How to build
