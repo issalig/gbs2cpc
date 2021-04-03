@@ -10,19 +10,17 @@ It allows to use the GBS8200 RGB to VGA converter in simple line doubling mode,
 avoiding all the artifacts and problems caused by resampling and 50>60Hz
 conversion.
 
-The output is progressive scan VGA at 50Hz and 31.5KHz.
+The output is progressive scan VGA at 50Hz and 31.5KHz and it works with CPC RGBS signal.
 
 Hardware setup
 --------------
 
-Quite simple actually.
-
-This was tested with GBS8200 V4.0 (2014.05.15) and V5.0 2015.01.15.
+It has been tested with GBS8200 V4.0 (2014.05.15) and V5.0 (2015.01.15)
 
 First of all, you need to disable the built-in controller of the GBS8200. This
 is done by closing the P8 jumper.
 
-Then, you need to conenct the Launchpad to the internal I2C bus on the P5 connector.
+Then, you need to conenct the microcontroller SDA/SCL lines on the P5 connector.
 Note that you may need to solder pins to this connector as it is usually not
 populated.
 
