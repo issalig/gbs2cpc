@@ -6,7 +6,7 @@
 //   StartWire and StopWire from https://github.com/ramapcsx2/gbs-control
 //
 // status:
-//   It works with ESP8266 Wemos Mini
+//   It works with ESP8266 Wemos Mini and arduino
 //
 // play:
 // Connect GND, SCL -> D1 (wemos), SDA -> D2 (wemos)
@@ -43,8 +43,14 @@ void startWire() {
   Wire.begin();
   // The i2c wire library sets pullup resistors on by default.
   // Disable these to detect/work with GBS onboard pullups
+
+#if defined(__AVR__)    
+  pinMode(SCL, OUTPUT);//_OPEN_DRAIN);
+  pinMode(SDA, OUTPUT);//_OPEN_DRAIN);
+#elif defined(ESP8266)
   pinMode(SCL, OUTPUT_OPEN_DRAIN);
   pinMode(SDA, OUTPUT_OPEN_DRAIN);
+#endif  
   // no issues even at 700k, requires ESP8266 160Mhz CPU clock, else (80Mhz) uses 400k in library
   // no problem with Si5351 at 700k either
   Wire.setClock(400000);
@@ -85,7 +91,6 @@ void setup() {
     Wire.endTransmission();
   }
 
-  Serial.print("Set 288p");
   pal288p();
 
 }
@@ -202,8 +207,14 @@ int peek(unsigned long reg)
     value = Wire.read();
     Serial.println(); Serial.println(value);
   }
-  Serial.printf("Reg %x value %x\n", reg, value);
 
+
+#if defined(__AVR__)  
+  Serial.print("reg "); Serial.print(reg);
+  Serial.print("value "); Serial.println(value);
+#elif defined(ESP8266)
+  Serial.printf("Reg %x value %x\n", reg, value);
+#endif  
 
   return 0;
 }
@@ -246,8 +257,14 @@ int poke( unsigned long reg, unsigned long val )
   Wire.write(0xFF);
   Wire.endTransmission();
 
+   
+#if defined(__AVR__)  
+  Serial.print("reg "); Serial.print(reg);
+  Serial.print("set to "); Serial.println(val);
+#elif defined(ESP8266)
   Serial.printf("Reg %x set to %x\n", reg, val);
+#endif  
 
-
+  
 return 0;
 }
