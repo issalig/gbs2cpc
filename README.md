@@ -4,7 +4,7 @@ GBS8200 line doubling driver
 What it is
 ----------
 
-This is a port of https://github.com/pulkomandy/gembascan for Wemos D1 mini (and surely other arduino boards). 
+This is a port of https://github.com/pulkomandy/gembascan for Wemos D1 mini and arduino boards. 
 Instructions are derived from that repository.
 
 It allows to use the GBS8200 RGB to VGA converter in simple line doubling mode,
@@ -33,9 +33,16 @@ Wemos > GBS8200
 * GND > P5.GND
 * D2 > P5.SDA
 
-You can connect P9.+ to Wemos 5V ONLY if you are powering GBS with 5V. In other case just connect Wemos to a USB charger.
+You can connect P9.+ to microcontroller 5V ONLY if you are powering GBS with 5V. In other case just connect the microcontroller independently.
 
-3.3V > P5.VCC is not recommended.
+Do NOT connect 3.3V > P5.VCC
+
+
+Arduino > GBS8200
+
+* SCL > P5.SCL
+* GND > P5.GND
+* SDA > P5.SDA
 
 
 How to build
