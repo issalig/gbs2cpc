@@ -5,6 +5,7 @@ What it is
 ----------
 
 This is a port of https://github.com/pulkomandy/gembascan for Wemos D1 mini (and surely other arduino boards). 
+Instructions are derived from that repository.
 
 It allows to use the GBS8200 RGB to VGA converter in simple line doubling mode,
 avoiding all the artifacts and problems caused by resampling and 50>60Hz
@@ -50,33 +51,24 @@ Once installed, just compile and flash it.
 How to use it
 -------------
 
-Also quite simple.
+First make sure P8 jumper is connected.
 
-First connect the video inputs and outputs. You may need a SCART to VGA adapter
-for the input (or whatever connector you want to use). Plug the power supply to
+Then connect the video inputs and outputs. For input I use P11 RGBS and GND from the CPC. Plug the power supply to
 the GBS8200. Nothing happens at this point, this is expected. Connect power to
-the Launchpad. It automatically sets the chip up and starts running.
+the microcontroller board. It automatically sets the chip up and starts running.
 
-A serial terminal is available on the Launchpad debug USB port. It allows you
-to peek and poke the video controller registers for adjustments and experimentation.
-Later, more high-level commands will be added.
-
-You can also reflash the Stellaris or press the reset button at any time. It
-will reprogram the scandoubler again, which is useful if something goes wrong
-or if you want to quickly test changes to the code.
+In case of problems with the image you can press reset button on the microcontroller and it will send commands again.
 
 Compatibility
 -------------
 
-This was confirmed working with the following input sources:
+I have tested it on:
+- Amstrad CPC 6128
+
+and others reported that it also works on
 - Amstrad 6128Plus
 - Amstrad CPC
 - Thomson TO8
-
-And the following display hardware:
-- No name "TFT color monitor" with VGA input, MST703 based.
-- ACER video projector at Forever partyplace.
-- "Linetech" brand TFT TV, manufactured by Vestel.
 
 Known problems
 --------------
