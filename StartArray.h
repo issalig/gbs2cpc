@@ -1,5 +1,8 @@
-
-const uint8_t startArray[] /*PROGMEM*/ = {
+const uint8_t startArray[] 
+#if defined(__AVR__)   //PROGMEM is crashing with ESP8266 ???
+PROGMEM
+#endif
+= {
 
 240, 0,   // Select register bank 0
 68,  0,   // S0_44: put everything in reset state

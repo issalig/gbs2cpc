@@ -15,6 +15,11 @@
 #include "StartArray.h"
 #include "ProgramArray288p.h"
 
+#if defined(__AVR_ATtiny85__)    
+#define SCL 7
+#define SDA 5
+#endif
+
 void scan_i2c() {
   Serial.println("Start I2C scanner ...");
   Serial.print("\r\n");
@@ -45,8 +50,8 @@ void startWire() {
   // Disable these to detect/work with GBS onboard pullups
 
 #if defined(__AVR__)    
-  pinMode(SCL, OUTPUT);//_OPEN_DRAIN);
-  pinMode(SDA, OUTPUT);//_OPEN_DRAIN);
+  pinMode(SCL, OUTPUT);
+  pinMode(SDA, OUTPUT);
 #elif defined(ESP8266)
   pinMode(SCL, OUTPUT_OPEN_DRAIN);
   pinMode(SDA, OUTPUT_OPEN_DRAIN);
@@ -65,26 +70,13 @@ void stopWire() {
 
 
 void setup() {
-
-
-  Serial.begin(115200); // Arduino IDE Serial Monitor requires the same 115200 bauds!
-
+  Serial.begin(115200);
   startWire();
-  scan_i2c();
-
-
-  //preprare I2C
-  //I2CMasterInitExpClk(I2C0_MASTER_BASE, SysCtlClockGet(), false);
+  //scan_i2c();
 
   Serial.print("Starting GBS8200...\n");
-
-  //I2CMasterSlaveAddrSet(I2C0_MASTER_BASE, 0x17, false);
   for (int i = 0; i < sizeof(startArray); i = i + 2)
   {
-    //I2CMasterDataPut(I2C0_MASTER_BASE, startArray[i]);
-    //I2CMasterControl(I2C0_MASTER_BASE,
-    //                 (i & 1) ? I2C_MASTER_CMD_BURST_SEND_FINISH : I2C_MASTER_CMD_BURST_SEND_START);
-    //while (I2CMasterBusy(I2C0_MASTER_BASE));
     Wire.beginTransmission(0x17);
     Wire.write(startArray[i]);
     Wire.write(startArray[i + 1]);
@@ -92,27 +84,20 @@ void setup() {
   }
 
   pal288p();
-
 }
+
 void loop() {
+  //nothing for now, all is done in setup
 }
 
 int pal288p() {
   Serial.print("Configuring to PAL progressive");
 
-  //I2CMasterSlaveAddrSet(I2C0_MASTER_BASE, 0x17, false);
   for (int bank = 0; bank < 6; bank++) {
-    // Switch bank command
-    //I2CMasterDataPut(I2C0_MASTER_BASE, 0xF0);
-    //I2CMasterControl(I2C0_MASTER_BASE, I2C_MASTER_CMD_BURST_SEND_START);
+    // Switch bank command 
     Wire.beginTransmission(0x17);
-
     Wire.write(0xF0);
-    //while(I2CMasterBusy(I2C0_MASTER_BASE));
     // Param: bank number
-    //I2CMasterDataPut(I2C0_MASTER_BASE, bank);
-    //I2CMasterControl(I2C0_MASTER_BASE, I2C_MASTER_CMD_BURST_SEND_FINISH);
-    //while(I2CMasterBusy(I2C0_MASTER_BASE));
     Wire.write(bank);
     Wire.endTransmission();
 
@@ -122,34 +107,15 @@ int pal288p() {
       // Send them 16 bytes at a time, first giving the register number.
       if ((i % 16) == 0) {
         // Start of a new block
-        //I2CMasterDataPut(I2C0_MASTER_BASE, io);
-        //I2CMasterControl(I2C0_MASTER_BASE, I2C_MASTER_CMD_BURST_SEND_START);
-        //while(I2CMasterBusy(I2C0_MASTER_BASE));
         Wire.beginTransmission(0x17);
-        Wire.write(io);
-        //I2CMasterDataPut(I2C0_MASTER_BASE, programArray288[bank].data[i]);
-        //I2CMasterControl(I2C0_MASTER_BASE, I2C_MASTER_CMD_BURST_SEND_CONT);
-        //while(I2CMasterBusy(I2C0_MASTER_BASE));
-        Wire.write(programArray288[bank].data[i]);
-        //Wire.endTransmission();
-
-
+        Wire.write(io);     
+        Wire.write(programArray288[bank].data[i]);     
       } else if (i % 16 == 15) {
-        // End of 16byte block, or end of bank
-        //I2CMasterDataPut(I2C0_MASTER_BASE, programArray288[bank].data[i]);
-        //I2CMasterControl(I2C0_MASTER_BASE, I2C_MASTER_CMD_BURST_SEND_FINISH);
-        //while(I2CMasterBusy(I2C0_MASTER_BASE));
-        //Wire.beginTransmission(0x17);
+        // End of 16byte block, or end of bank        
         Wire.write(programArray288[bank].data[i]);
         Wire.endTransmission();
       } else {
-        //I2CMasterDataPut(I2C0_MASTER_BASE, programArray288[bank].data[i]);
-        //I2CMasterControl(I2C0_MASTER_BASE, I2C_MASTER_CMD_BURST_SEND_CONT);
-        //while(I2CMasterBusy(I2C0_MASTER_BASE));
-        //Wire.beginTransmission(0x17);
         Wire.write(programArray288[bank].data[i]);
-        //Wire.endTransmission();
-
       }
     }
   }
@@ -162,44 +128,22 @@ int pal288p() {
 int peek(unsigned long reg)
 {
 
-  //I2CMasterSlaveAddrSet(I2C0_MASTER_BASE, 0x17, false);
   Wire.beginTransmission(0x17);
-
   // Switch bank command
-  //I2CMasterDataPut(I2C0_MASTER_BASE, 0xF0);
-  //    I2CMasterControl(I2C0_MASTER_BASE, I2C_MASTER_CMD_BURST_SEND_START);
-  //    while(I2CMasterBusy(I2C0_MASTER_BASE));
   Wire.write(0XF0);
-
-  // Param: bank number
-  //I2CMasterDataPut(I2C0_MASTER_BASE, reg / 256);
-  //    I2CMasterControl(I2C0_MASTER_BASE, I2C_MASTER_CMD_BURST_SEND_FINISH);
-  //    while(I2CMasterBusy(I2C0_MASTER_BASE));
-  //      SysCtlDelay(SysCtlClockGet() / (1000 / 3));
-
+  // Param: bank number  
   Wire.write(reg / 256);
   Wire.endTransmission();
   delay(5);
 
-  // Send register address byte
-  //I2CMasterDataPut(I2C0_MASTER_BASE, reg & 0xFF);
-  //I2CMasterControl(I2C0_MASTER_BASE, I2C_MASTER_CMD_SINGLE_SEND);
-  //while (I2CMasterBusy(I2C0_MASTER_BASE));
-  //SysCtlDelay(SysCtlClockGet() / (1000 / 3));
-
+  // Send register address byte 
   Wire.beginTransmission(0x17);
   Wire.write(0xFF);
   Wire.endTransmission();
   delay(5);
 
-  // Get register value
-  //I2CMasterSlaveAddrSet(I2C0_MASTER_BASE, 0x17, true);
-  //I2CMasterControl(I2C0_MASTER_BASE, I2C_MASTER_CMD_SINGLE_RECEIVE);
-  //while (I2CMasterBusy(I2C0_MASTER_BASE));
-
-  //int value = I2CMasterDataGet(I2C0_MASTER_BASE);
+  // Get register value  
   int value;
-
 
   Wire.requestFrom(0x17, (uint8_t)1);
   while (Wire.available())
@@ -223,38 +167,21 @@ int peek(unsigned long reg)
 int poke( unsigned long reg, unsigned long val )
 {
  
-  //I2CMasterSlaveAddrSet(I2C0_MASTER_BASE, 0x17, false);
   // Switch bank command
-  //I2CMasterDataPut(I2C0_MASTER_BASE, 0xF0);
-  //I2CMasterControl(I2C0_MASTER_BASE, I2C_MASTER_CMD_BURST_SEND_START);
-  //while (I2CMasterBusy(I2C0_MASTER_BASE));
   Wire.beginTransmission(0x17);
   Wire.write(0xF0);
  
   // Param: bank number
-  //I2CMasterDataPut(I2C0_MASTER_BASE, reg / 256);
-  //I2CMasterControl(I2C0_MASTER_BASE, I2C_MASTER_CMD_BURST_SEND_FINISH);
-  //while (I2CMasterBusy(I2C0_MASTER_BASE));
-  //SysCtlDelay(SysCtlClockGet() / (1000 / 3));
- 
   Wire.write(reg / 256);
   Wire.endTransmission();
   delay(5);
 
-  // Send register address byte
-  //I2CMasterDataPut(I2C0_MASTER_BASE, reg & 0xFF);
-  //I2CMasterControl(I2C0_MASTER_BASE, I2C_MASTER_CMD_BURST_SEND_START);
-  //while (I2CMasterBusy(I2C0_MASTER_BASE));
-
+  // Send register address byte  
   Wire.beginTransmission(0x17);
   Wire.write(0xFF);
   
-  // Set register value
-  //I2CMasterDataPut(I2C0_MASTER_BASE, val & 0xFF);
-  //I2CMasterControl(I2C0_MASTER_BASE, I2C_MASTER_CMD_BURST_SEND_FINISH);
-  //while (I2CMasterBusy(I2C0_MASTER_BASE));
-  
-  Wire.write(0xFF);
+  // Set register value  
+  Wire.write(val&0xFF);
   Wire.endTransmission();
 
    
