@@ -1,8 +1,8 @@
 GBS8200 line doubling driver
 ============================
 
-What it is
-----------
+What is that?
+-------------
 
 This is a port of https://github.com/pulkomandy/gembascan for Wemos D1 mini and arduino boards. 
 Instructions are derived from that repository.
